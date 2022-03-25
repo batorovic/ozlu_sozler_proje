@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "577611812536",
+    "project_id": "ozlu-sozler-73d65",
+    "storage_bucket": "ozlu-sozler-73d65.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577611812536:android:98d8fd6ee514d354fb2e4d",
+        "android_client_info": {
+          "package_name": "com.example.ozlu_sozler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "577611812536-bif3snn5d0o8n3ra3ma4p0vjj6h6dreg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVlErWsegW8_4AIQVcEdJzWuwo-NDdPZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "577611812536-bif3snn5d0o8n3ra3ma4p0vjj6h6dreg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
