@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ozlu_sozler/Screens/login/components/forget_password.dart';
 import 'package:ozlu_sozler/components/rounded_button.dart';
 import 'package:ozlu_sozler/components/rounded_input.dart';
+import 'package:ozlu_sozler/components/rounded_login.dart';
 import 'package:ozlu_sozler/components/rounded_password_input.dart';
 
 class LoginForm extends StatelessWidget {
@@ -11,13 +13,16 @@ class LoginForm extends StatelessWidget {
     required this.animationDuration,
     required this.size,
     required this.defaultLoginSize,
+    required this.controller,
+    required this.controllerPassword,
   }) : super(key: key);
 
   final bool isLogin;
   final Duration animationDuration;
   final Size size;
   final double defaultLoginSize;
-
+  final TextEditingController controller;
+  final TextEditingController controllerPassword;
   @override
   Widget build(BuildContext context) {
     return AnimatedOpacity(
@@ -45,10 +50,24 @@ class LoginForm extends StatelessWidget {
                   height: 125,
                 ),
                 const SizedBox(height: 40),
-                const RoundedInput(icon: Icons.mail, hint: 'Username'),
-                const RoundedPasswordInput(hint: 'Password'),
+                RoundedInput(
+                  icon: Icons.mail,
+                  hint: 'E-Mail',
+                  controller: controller,
+                ),
+                RoundedPasswordInput(
+                    hint: 'Password', controllerPassword: controllerPassword),
                 const SizedBox(height: 10),
-                const RoundedButton(title: 'LOGIN'),
+                RoundedLogin(
+                  title: 'Giriş Yap',
+                  mail: controller,
+                  password: controllerPassword,
+                ),
+                const SizedBox(height: 10),
+                ForgotPassword(
+                  title: 'Şifremi Unuttum',
+                  controller: controller,
+                )
               ],
             ),
           ),

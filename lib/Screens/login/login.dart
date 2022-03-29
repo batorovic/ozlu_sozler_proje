@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ozlu_sozler/Screens/login/components/cancel_button.dart';
 import 'package:ozlu_sozler/Screens/login/components/login_form.dart';
 import 'package:ozlu_sozler/Screens/login/components/register_form.dart';
-import 'package:ozlu_sozler/components/rounded_button.dart';
-import 'package:ozlu_sozler/components/rounded_input.dart';
-import 'package:ozlu_sozler/components/rounded_password_input.dart';
 import 'package:ozlu_sozler/constants.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,6 +19,9 @@ class _LoginScreenState extends State<LoginScreen>
   late Animation<double> containerSize;
   Duration animationDuration = const Duration(milliseconds: 250);
 
+  final myController = TextEditingController();
+  final myControllerPassword = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void dispose() {
     animationController.dispose();
+    myController.dispose();
     super.dispose();
   }
 
@@ -71,8 +71,8 @@ class _LoginScreenState extends State<LoginScreen>
             top: -50,
             left: -50,
             child: Container(
-              width: 180,
-              height: 180,
+              width: 150,
+              height: 150,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(100),
                   color: kPrimaryColor),
@@ -94,10 +94,13 @@ class _LoginScreenState extends State<LoginScreen>
                     }),
           // Login Formu
           LoginForm(
-              isLogin: isLogin,
-              animationDuration: animationDuration,
-              size: size,
-              defaultLoginSize: defaultLoginSize),
+            isLogin: isLogin,
+            animationDuration: animationDuration,
+            size: size,
+            defaultLoginSize: defaultLoginSize,
+            controller: myController,
+            controllerPassword: myControllerPassword,
+          ),
 
           // Register Container
           AnimatedBuilder(
@@ -114,10 +117,13 @@ class _LoginScreenState extends State<LoginScreen>
           ),
           // Register Formu
           RegisterForm(
-              isLogin: isLogin,
-              animationDuration: animationDuration,
-              size: size,
-              defaultLoginSize: defaultLoginSize),
+            isLogin: isLogin,
+            animationDuration: animationDuration,
+            size: size,
+            defaultLoginSize: defaultLoginSize,
+            // controller: myController,
+            // controllerPassword: myControllerPassword,
+          ),
         ],
       ),
     );

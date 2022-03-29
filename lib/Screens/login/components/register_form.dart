@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ozlu_sozler/components/rounded_button.dart';
 import 'package:ozlu_sozler/components/rounded_input.dart';
@@ -11,15 +12,23 @@ class RegisterForm extends StatelessWidget {
     required this.animationDuration,
     required this.size,
     required this.defaultLoginSize,
+    // required this.controller,
+    // required this.controllerPassword,
   }) : super(key: key);
 
   final bool isLogin;
   final Duration animationDuration;
   final Size size;
   final double defaultLoginSize;
+  // final TextEditingController controller;
+  // final TextEditingController controllerPassword;
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController _controller = TextEditingController();
+    TextEditingController _controllerPassword = TextEditingController();
+    TextEditingController _controllerUserName = TextEditingController();
+
     return AnimatedOpacity(
       opacity: isLogin ? 0.0 : 1.0,
       duration: animationDuration * 4,
@@ -47,10 +56,18 @@ class RegisterForm extends StatelessWidget {
                     height: 125,
                   ),
                   const SizedBox(height: 40),
-                  const RoundedInput(icon: Icons.mail, hint: 'E-mail'),
-                  const RoundedInput(
-                      icon: Icons.face_rounded, hint: 'Kullanici Adi'),
-                  const RoundedPasswordInput(hint: 'Sifre'),
+                  RoundedInput(
+                    icon: Icons.mail,
+                    hint: 'E-mail',
+                    controller: _controller, //bunlar degisecek
+                  ),
+                  RoundedInput(
+                    icon: Icons.face_rounded,
+                    hint: 'Kullanici Adi',
+                    controller: _controllerUserName, // bunlar degisecek
+                  ),
+                  RoundedPasswordInput(
+                      hint: 'Sifre', controllerPassword: _controllerPassword),
                   const SizedBox(height: 10),
                   const RoundedButton(title: 'Kayit Ol'),
                 ],

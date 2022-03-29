@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:ozlu_sozler/Screens/password/remember_password.dart';
 import 'package:ozlu_sozler/constants.dart';
 
-class RoundedButton extends StatelessWidget {
-  const RoundedButton({
+class ForgotPassword extends StatelessWidget {
+  const ForgotPassword({
     Key? key,
     required this.title,
+    required this.controller,
   }) : super(key: key);
 
   final String title;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return InkWell(
-      // giriş yap
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => RememberPassword(
+                      controller: controller,
+                    )));
+      },
       borderRadius: BorderRadius.circular(30),
       child: Container(
           width: size.width * 0.8,
