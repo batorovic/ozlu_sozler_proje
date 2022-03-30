@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ozlu_sozler/Modals/controller.dart';
 import 'package:ozlu_sozler/Screens/login/components/cancel_button.dart';
 import 'package:ozlu_sozler/Screens/login/components/login_form.dart';
 import 'package:ozlu_sozler/Screens/login/components/register_form.dart';
@@ -21,6 +22,11 @@ class _LoginScreenState extends State<LoginScreen>
 
   final myController = TextEditingController();
   final myControllerPassword = TextEditingController();
+  final myControlleruserName = TextEditingController();
+
+  final myControllerRegisterUserName = TextEditingController();
+  final myControllerRegisterEmail = TextEditingController();
+  final myControllerRegisterPassword = TextEditingController();
 
   @override
   void initState() {
@@ -34,12 +40,23 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void dispose() {
     animationController.dispose();
+    myControllerPassword.dispose();
+    myControlleruserName.dispose();
     myController.dispose();
+
     super.dispose();
+  }
+
+  void resetController() {
+    myController.text = '';
+    myControllerPassword.text = '';
+    myControlleruserName.text = '';
   }
 
   @override
   Widget build(BuildContext context) {
+    MyController _mycontroller = MyController();
+
     Size size = MediaQuery.of(context).size;
     // klavye acildi mi yoksa acilmadi mi kontrol
     double viewInset = MediaQuery.of(context).viewInsets.bottom;
@@ -121,8 +138,10 @@ class _LoginScreenState extends State<LoginScreen>
             animationDuration: animationDuration,
             size: size,
             defaultLoginSize: defaultLoginSize,
-            // controller: myController,
-            // controllerPassword: myControllerPassword,
+            // controllerMail: _mycontroller.getEmailController(), //burası
+            controllerMail: myControllerRegisterEmail,
+            controllerPassword: myControllerRegisterPassword,
+            controllerUserName: myControllerRegisterUserName,
           ),
         ],
       ),

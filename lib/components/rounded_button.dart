@@ -13,7 +13,6 @@ class RoundedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return InkWell(
-      // giriş yap
       onTap: () {},
       borderRadius: BorderRadius.circular(30),
       child: Container(

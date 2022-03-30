@@ -3,8 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ozlu_sozler/Screens/login/components/forget_password.dart';
 import 'package:ozlu_sozler/components/rounded_button.dart';
 import 'package:ozlu_sozler/components/rounded_input.dart';
-import 'package:ozlu_sozler/components/rounded_login.dart';
-import 'package:ozlu_sozler/components/rounded_password_input.dart';
+import 'package:ozlu_sozler/Screens/login/components/rounded_login.dart';
+import 'package:ozlu_sozler/Screens/login/components/rounded_password_input.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({

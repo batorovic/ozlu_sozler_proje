@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ozlu_sozler/Screens/login/components/rounded_register.dart';
 import 'package:ozlu_sozler/components/rounded_button.dart';
 import 'package:ozlu_sozler/components/rounded_input.dart';
-import 'package:ozlu_sozler/components/rounded_password_input.dart';
+import 'package:ozlu_sozler/Screens/login/components/rounded_password_input.dart';
+import 'package:ozlu_sozler/Modals/controller.dart';
 
 class RegisterForm extends StatelessWidget {
   const RegisterForm({
@@ -12,7 +14,10 @@ class RegisterForm extends StatelessWidget {
     required this.animationDuration,
     required this.size,
     required this.defaultLoginSize,
-    // required this.controller,
+    required this.controllerMail,
+    required this.controllerUserName,
+    required this.controllerPassword,
+
     // required this.controllerPassword,
   }) : super(key: key);
 
@@ -20,15 +25,12 @@ class RegisterForm extends StatelessWidget {
   final Duration animationDuration;
   final Size size;
   final double defaultLoginSize;
-  // final TextEditingController controller;
-  // final TextEditingController controllerPassword;
+  final TextEditingController controllerMail;
+  final TextEditingController controllerUserName;
+  final TextEditingController controllerPassword;
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _controller = TextEditingController();
-    TextEditingController _controllerPassword = TextEditingController();
-    TextEditingController _controllerUserName = TextEditingController();
-
     return AnimatedOpacity(
       opacity: isLogin ? 0.0 : 1.0,
       duration: animationDuration * 4,
@@ -59,17 +61,23 @@ class RegisterForm extends StatelessWidget {
                   RoundedInput(
                     icon: Icons.mail,
                     hint: 'E-mail',
-                    controller: _controller, //bunlar degisecek
+                    controller: controllerMail, //bunlar degisecek
                   ),
                   RoundedInput(
                     icon: Icons.face_rounded,
                     hint: 'Kullanici Adi',
-                    controller: _controllerUserName, // bunlar degisecek
+                    controller: controllerUserName, // bunlar degisecek
                   ),
                   RoundedPasswordInput(
-                      hint: 'Sifre', controllerPassword: _controllerPassword),
+                      hint: 'Sifre', controllerPassword: controllerPassword),
                   const SizedBox(height: 10),
-                  const RoundedButton(title: 'Kayit Ol'),
+                  //signup
+                  RoundedRegister(
+                    title: 'Kayıt Ol',
+                    mail: controllerMail,
+                    username: controllerUserName,
+                    password: controllerPassword,
+                  ),
                 ],
               ),
             ),
