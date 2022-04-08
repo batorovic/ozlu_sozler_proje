@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ozlu_sozler/components/rounded_button.dart';
+import 'package:ozlu_sozler/Screens/login/components/remember_button.dart';
+import 'package:ozlu_sozler/service/auth.dart';
 import 'package:ozlu_sozler/components/rounded_input.dart';
 import 'package:ozlu_sozler/constants.dart';
 
@@ -39,10 +40,10 @@ class RememberPassword extends StatelessWidget {
                 children: [
                   RoundedInput(
                     icon: Icons.email_outlined,
-                    hint: 'Mailiniz',
+                    hint: 'Mail',
                     controller: controller,
                   ),
-                  const RoundedButton(title: 'Şifremi Hatırlat'),
+                  RememberButton(title: 'Reset my password', mail: controller),
                 ],
               ))
         ],

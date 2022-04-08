@@ -1,32 +1,22 @@
-import 'package:flutter/gestures.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ozlu_sozler/Screens/quote/quotes.dart';
 import 'package:ozlu_sozler/constants.dart';
-import 'package:ozlu_sozler/service/auth.dart';
-import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 
-class RoundedRegister extends StatelessWidget {
-  const RoundedRegister({
+class RememberButton extends StatelessWidget {
+  const RememberButton({
     Key? key,
     required this.title,
     required this.mail,
-    required this.password,
-    required this.username,
   }) : super(key: key);
 
   final String title;
   final TextEditingController mail;
-  final TextEditingController password;
-  final TextEditingController username;
 
   @override
   Widget build(BuildContext context) {
-    AuthService _authService = AuthService();
-    ProgressDialog pd = ProgressDialog(context: context);
     Size size = MediaQuery.of(context).size;
     return InkWell(
-      // signup yap
-      onTap: () {
+      onTap: () async {
         showDialog(
             context: context,
             barrierDismissible: false,
@@ -36,19 +26,27 @@ class RoundedRegister extends StatelessWidget {
                     color: kPrimaryColor,
                   ),
                 ));
-        _authService
-            .signUp(
-                userName: username.text,
-                email: mail.text,
-                password: password.text)
-            .then((String value) =>
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(value),
-                  duration: const Duration(milliseconds: 1500),
-                  backgroundColor: kPrimaryColor,
-                  behavior: SnackBarBehavior.floating,
-                )))
-            .then((value) => Navigator.of(context).pop());
+
+        try {
+          await FirebaseAuth.instance
+              .sendPasswordResetEmail(email: mail.text.trim());
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Password reset mail sent'),
+                duration: Duration(milliseconds: 1500),
+                backgroundColor: kPrimaryColor,
+                behavior: SnackBarBehavior.floating),
+          );
+        } on FirebaseAuthException catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(e.message.toString()),
+                duration: const Duration(milliseconds: 1500),
+                backgroundColor: kPrimaryColor,
+                behavior: SnackBarBehavior.floating),
+          );
+        }
+        Navigator.of(context).pop();
       },
       borderRadius: BorderRadius.circular(30),
       child: Container(

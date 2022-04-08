@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ozlu_sozler/Screens/quote/quotes.dart';
 import 'package:ozlu_sozler/constants.dart';
@@ -22,9 +23,20 @@ class RoundedLogin extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return InkWell(
       // giriş yap
-      onTap: () {
-        _authService.signIn(mail.text.trim(), password.text.trim()).then(
-            (String value) =>
+      onTap: () async {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: kBackGroundColor,
+                    color: kPrimaryColor,
+                  ),
+                ));
+
+        _authService
+            .signIn(mail.text.trim(), password.text.trim())
+            .then((String value) =>
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(value),
                   duration: const Duration(milliseconds: 1500),
@@ -38,7 +50,8 @@ class RoundedLogin extends StatelessWidget {
                               builder: (context) => const Quotes()));
                     }
                   },
-                )));
+                )))
+            .then((value) => Navigator.of(context).pop());
       },
       borderRadius: BorderRadius.circular(30),
       child: Container(

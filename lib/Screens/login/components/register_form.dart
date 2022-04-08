@@ -48,7 +48,7 @@ class RegisterForm extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Hadi Başlayalim ! ',
+                    "Let's get started",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                   ),
                   const SizedBox(height: 40),
@@ -65,15 +65,15 @@ class RegisterForm extends StatelessWidget {
                   ),
                   RoundedInput(
                     icon: Icons.face_rounded,
-                    hint: 'Kullanici Adi',
+                    hint: 'Username',
                     controller: controllerUserName, // bunlar degisecek
                   ),
                   RoundedPasswordInput(
-                      hint: 'Sifre', controllerPassword: controllerPassword),
+                      hint: 'Password', controllerPassword: controllerPassword),
                   const SizedBox(height: 10),
                   //signup
                   RoundedRegister(
-                    title: 'Kayıt Ol',
+                    title: 'Register',
                     mail: controllerMail,
                     username: controllerUserName,
                     password: controllerPassword,

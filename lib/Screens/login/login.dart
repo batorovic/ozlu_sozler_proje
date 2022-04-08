@@ -172,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen>
                 },
           child: isLogin
               ? const Text(
-                  'Üye değilseniz hemen Üye olun',
+                  'Register now !',
                   style: TextStyle(color: kPrimaryColor, fontSize: 18),
                 )
               : null, // null dondurduk butonu disable etmek icin.

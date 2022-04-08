@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ozlu_sozler/Screens/login/login.dart';
+import 'package:ozlu_sozler/Screens/quote/quotes.dart';
 import 'package:ozlu_sozler/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -24,8 +25,8 @@ class MyApp extends StatelessWidget {
         primaryColor: kPrimaryColor,
         textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme),
       ),
-      home: const LoginScreen(),
-      //home: const MyHomePage(title: 'merhaba'),
+      // home: const LoginScreen(),
+      home: const Quotes(),
     );
   }
 }

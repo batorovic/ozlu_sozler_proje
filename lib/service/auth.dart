@@ -41,10 +41,15 @@ class AuthService {
         'E-mail': email,
         'sifre': password,
       });
-      return 'Signed In';
+      return 'Signed Up';
     } on FirebaseAuthException catch (e) {
       return e.message.toString();
     }
+  }
+
+  //resetpassword
+  Future resetPassword(TextEditingController mail) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: mail.text.trim());
   }
 
   //signout

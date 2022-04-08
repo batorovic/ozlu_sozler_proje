@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ozlu_sozler/Screens/login/components/forget_password.dart';
-import 'package:ozlu_sozler/components/rounded_button.dart';
 import 'package:ozlu_sozler/components/rounded_input.dart';
 import 'package:ozlu_sozler/Screens/login/components/rounded_login.dart';
 import 'package:ozlu_sozler/Screens/login/components/rounded_password_input.dart';
@@ -31,7 +30,6 @@ class LoginForm extends StatelessWidget {
       child: Align(
         alignment: Alignment.center,
         child: SingleChildScrollView(
-          //containerdı sized yaptim
           child: SizedBox(
             width: size.width,
             height: defaultLoginSize,
@@ -40,8 +38,11 @@ class LoginForm extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'Hoşgeldiniz',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                  'Welcome',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
                 ),
                 const SizedBox(height: 40),
                 SvgPicture.asset(
@@ -56,16 +57,18 @@ class LoginForm extends StatelessWidget {
                   controller: controller,
                 ),
                 RoundedPasswordInput(
-                    hint: 'Password', controllerPassword: controllerPassword),
+                  hint: 'Password',
+                  controllerPassword: controllerPassword,
+                ),
                 const SizedBox(height: 10),
                 RoundedLogin(
-                  title: 'Giriş Yap',
+                  title: 'Login',
                   mail: controller,
                   password: controllerPassword,
                 ),
                 const SizedBox(height: 10),
                 ForgotPassword(
-                  title: 'Şifremi Unuttum',
+                  title: 'Forgot my password',
                   controller: controller,
                 )
               ],
