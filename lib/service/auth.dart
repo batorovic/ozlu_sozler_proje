@@ -69,4 +69,21 @@ class AuthService {
       return null;
     }
   }
+
+  //read data kategori
+  readKategori(QuerySnapshot snapData) async {
+    var _instance = FirebaseFirestore.instance;
+    var listem = [];
+    CollectionReference kategori = _instance.collection('kategori');
+
+    for (var i = 0; i < snapData.size; i++) {
+      DocumentSnapshot data =
+          await kategori.doc(snapData.docs[i]['Kategori']).get();
+      listem.add(data['Kategori']);
+    }
+
+    print(listem);
+
+    return listem;
+  }
 }
