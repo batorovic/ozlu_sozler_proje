@@ -86,4 +86,11 @@ class AuthService {
 
     return listem;
   }
+
+  Stream readSomething(String docId, String collection) {
+    return FirebaseFirestore.instance
+        .collection(collection)
+        .doc(docId)
+        .snapshots();
+  }
 }
