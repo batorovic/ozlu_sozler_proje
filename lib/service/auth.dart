@@ -87,10 +87,23 @@ class AuthService {
     return listem;
   }
 
-  Stream readSomething(String docId, String collection) {
-    return FirebaseFirestore.instance
-        .collection(collection)
-        .doc(docId)
-        .snapshots();
+  readSomething(/*String docId, String collection*/) async {
+    // return FirebaseFirestore.instance
+    //     .collection(collection)
+    //     .doc(docId)
+    //     .snapshots();
+
+    var kategoriList = [];
+
+    FirebaseFirestore.instance
+        .collection('kategori')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        kategoriList.add(doc["Kategori"]);
+      });
+    });
+
+    return kategoriList;
   }
 }
