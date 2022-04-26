@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ozlu_sozler/Screens/favorites/favorites.dart';
 import 'package:ozlu_sozler/constants.dart';
 import 'package:ozlu_sozler/service/auth.dart';
 
@@ -11,6 +13,9 @@ class Quotes extends StatefulWidget {
 }
 
 class _QuotesState extends State<Quotes> {
+  final User? user = FirebaseAuth.instance.currentUser;
+
+  AuthService _authService = AuthService();
   int _selectedIndex = 0;
   List<DropdownMenuItem<String>> menuItems = [];
 
@@ -19,6 +24,10 @@ class _QuotesState extends State<Quotes> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      // if (index == 1) {
+      //   Navigator.push(context,
+      //       MaterialPageRoute(builder: (context) => const Favorites()));
+      // }
     });
   }
 
@@ -43,135 +52,139 @@ class _QuotesState extends State<Quotes> {
 
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 50,
-            ),
-            // DropdownButton(items: menuItems, onChanged: (val) {}),
-
-            FutureBuilder(
-                future: (menuItems.isEmpty ? futureKategori() : null),
-                builder: (BuildContext context, AsyncSnapshot snapshot2) {
-                  if (snapshot2.connectionState == ConnectionState.waiting) {
-                    return const Center(child: Text('loading...'));
-                  } else {
-                    if (snapshot2.hasError) {
-                      return Center(child: Text('Error: ${snapshot2.error}'));
-                    } else {
-                      return DropdownButton(
-                          hint: const Text('Favorites'),
-                          value: _selectedValue,
-                          items: menuItems,
-                          onChanged: (String? _value) {
-                            setState(() {
-                              _selectedValue = _value!;
-                            });
-                          });
-                    }
-                  }
-                }),
-
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: quotes,
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text('Error');
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    // return Text('loading.');
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: kBackGroundColor,
-                        color: kPrimaryColor,
-                      ),
-                    );
-                  }
-
-                  final data = snapshot.requireData;
-
-                  return ListView.builder(
-                    itemCount: data.size,
-                    itemBuilder: (context, index) {
-                      if (_selectedValue == data.docs[index]['Kategori']) {
-                        return Center(
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  ListTile(
-                                    title: Text(data.docs[index]['söz']),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      Text('- ' + data.docs[index]['Yazar']),
-                                      const SizedBox(width: 8),
-                                      // const SizedBox(width: 8),
-                                      // TextButton(
-                                      //   child: const Text('LISTEN'),
-                                      //   onPressed: () {/* ... */},
-                                      // ),
-                                      // const SizedBox(width: 8),
-                                    ],
-                                  ),
-                                ],
-                              ),
+      body: _selectedIndex == 0
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  FutureBuilder(
+                      future: (menuItems.isEmpty ? futureKategori() : null),
+                      builder: (BuildContext context, AsyncSnapshot snapshot2) {
+                        if (snapshot2.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(child: Text('loading...'));
+                        } else {
+                          if (snapshot2.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot2.error}'));
+                          } else {
+                            return DropdownButton(
+                                hint: const Text('Favorites'),
+                                value: _selectedValue,
+                                items: menuItems,
+                                onChanged: (String? _value) {
+                                  setState(() {
+                                    _selectedValue = _value!;
+                                  });
+                                });
+                          }
+                        }
+                      }),
+                  Expanded(
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: quotes,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          return const Text('Error');
+                        }
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              backgroundColor: kBackGroundColor,
+                              color: kPrimaryColor,
                             ),
-                          ),
+                          );
+                        }
+
+                        final data = snapshot.requireData;
+
+                        return ListView.builder(
+                          itemCount: data.size,
+                          itemBuilder: (context, index) {
+                            if (_selectedValue ==
+                                data.docs[index]['Kategori']) {
+                              return cardData(data, index);
+                            } else if (_selectedValue == 'Hepsi') {
+                              return cardData(data, index);
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
                         );
-                      } else if (_selectedValue == 'Hepsi') {
-                        return Center(
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  ListTile(
-                                    title: Text(data.docs[index]['söz']),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      Text('- ' + data.docs[index]['Yazar']),
-                                      const SizedBox(width: 8),
-                                      // const SizedBox(width: 8),
-                                      // TextButton(
-                                      //   child: const Text('LISTEN'),
-                                      //   onPressed: () {/* ... */},
-                                      // ),
-                                      // const SizedBox(width: 8),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return SizedBox();
-                      }
-                      // return Text(data.docs[index]['söz'] +
-                      //     ' ' +
-                      //     ss2.docs[index]['Kategori']);
-                    },
-                  );
-                },
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            )
+          : const Favorites(),
+      // : _selectedIndex == 1
+      //     ? Favorites()
+      //     : Favorites(),
+      bottomNavigationBar: btmNavBar(),
+    );
+  }
+
+  Center cardData(QuerySnapshot<Object?> data, int index) {
+    return Center(
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                title: Text(data.docs[index]['Söz'],
+                    style: const TextStyle(fontSize: 18)),
+                subtitle: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                        onPressed: () async {
+                          // print(_authService.getUser()?.uid.toString());
+                          // print(data.docs[index].id);
+
+                          _authService.addToFavorite(
+                              data.docs[index].id, context);
+                        },
+                        child: const Text("Favorilere Ekle")),
+                    Text(
+                      '- ' + data.docs[index]['Yazar'],
+                      style: const TextStyle(fontSize: 15.5),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 4),
+
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   children: <Widget>[
+              //     // IconButton(
+              //     //   onPressed: () {
+              //     //     favoriIcon = !favoriIcon;
+              //     //   },
+              //     //   icon: const Icon(
+              //     //     Icons.favorite_border_outlined,
+              //     //     color: kPrimaryColor,
+              //     //   ),
+              //     // ),
+              //     Text(
+              //       '- ' + data.docs[index]['Yazar'],
+              //       style: const TextStyle(fontSize: 14.5),
+              //     ),
+              //     const SizedBox(width: 8),
+              //   ],
+              // ),
+            ],
+          ),
         ),
       ),
-      bottomNavigationBar: btmNavBar(),
     );
   }
 
@@ -194,24 +207,4 @@ class _QuotesState extends State<Quotes> {
       iconSize: 25,
     );
   }
-}
-
-List<DropdownMenuItem<String>> get dropdownItems {
-  List<DropdownMenuItem<String>> menuItems = [
-    // DropdownMenuItem(child: Text("USA"),value: "USA"),
-    // DropdownMenuItem(child: Text("),value: "USA"),
-  ];
-  FirebaseFirestore.instance
-      .collection('kategori')
-      .get()
-      .then((QuerySnapshot querySnapshot) {
-    querySnapshot.docs.forEach((doc) {
-      menuItems.add(DropdownMenuItem(
-        child: doc["Kategori"],
-        value: doc["Kategori"],
-      ));
-    });
-  });
-
-  return menuItems;
 }

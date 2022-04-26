@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ozlu_sozler/constants.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -12,6 +13,75 @@ class AuthService {
   //       email: email, password: password);
   //   return user.user;
   // }
+
+  CollectionReference favorites =
+      FirebaseFirestore.instance.collection('favoriler');
+
+  addToFavorite(String sozId, context) {
+    bool durum = false;
+    FirebaseFirestore.instance.collection('favoriler').get().then(
+        (QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        if (doc['uid'] == _auth.currentUser?.uid.toString() &&
+            sozId == doc["sozid"]) {
+          durum = true;
+          return;
+        }
+      });
+    }).then((value) => {
+          if (durum)
+            {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text("Zaten favorilerde mevcut ! "),
+                  duration: Duration(milliseconds: 1250),
+                  backgroundColor: kPrimaryColor,
+                  behavior: SnackBarBehavior.floating))
+            }
+          else
+            {
+              favorites
+                  .add({
+                    'uid': _auth.currentUser?.uid.toString(),
+                    'sozid': sozId
+                  })
+                  .then((value) =>
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Favorilere eklendi ! "),
+                        duration: Duration(milliseconds: 1250),
+                        backgroundColor: kPrimaryColor,
+                        behavior: SnackBarBehavior.floating,
+                      )))
+                  .catchError((error) =>
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("error"),
+                        duration: Duration(milliseconds: 1250),
+                        backgroundColor: kPrimaryColor,
+                        behavior: SnackBarBehavior.floating,
+                      )))
+            }
+        });
+    // var collection = FirebaseFirestore.instance.collection('favoriler');
+    // collection
+    //     .doc('doc_id')
+    //     .set({
+    //       'uid': _auth.currentUser?.uid.toString(),
+    //       'sozid': sozId,
+    //     }, SetOptions(merge: true))
+    //     .then((value) =>
+    //         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //           content: Text("Favorilere eklendi ! "),
+    //           duration: Duration(milliseconds: 1250),
+    //           backgroundColor: kPrimaryColor,
+    //           behavior: SnackBarBehavior.floating,
+    //         )))
+    //     .catchError((error) =>
+    //         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //           content: Text("error"),
+    //           duration: Duration(milliseconds: 1250),
+    //           backgroundColor: kPrimaryColor,
+    //           behavior: SnackBarBehavior.floating,
+    //         )));
+  }
 
   Future<String> signIn(String email, String password) async {
     try {
