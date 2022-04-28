@@ -145,14 +145,17 @@ class _QuotesState extends State<Quotes> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
-                        onPressed: () async {
-                          // print(_authService.getUser()?.uid.toString());
-                          // print(data.docs[index].id);
+                      onPressed: () async {
+                        // print(_authService.getUser()?.uid.toString());
+                        // print(data.docs[index].id);
 
-                          _authService.addToFavorite(
-                              data.docs[index].id, context);
-                        },
-                        child: const Text("Favorilere Ekle")),
+                        _authService.addToFavorite(
+                            data.docs[index].id, context);
+                      },
+                      child: const Text("Favorilere Ekle",
+                          style:
+                              TextStyle(color: kPrimaryColor, fontSize: 15.5)),
+                    ),
                     Text(
                       '- ' + data.docs[index]['Yazar'],
                       style: const TextStyle(fontSize: 15.5),
