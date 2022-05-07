@@ -32,6 +32,7 @@ class _FavoritesState extends State<Favorites> {
 
   @override
   Widget build(BuildContext context) {
+    //
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -57,7 +58,6 @@ class _FavoritesState extends State<Favorites> {
                               }
                               i += 1;
                             }
-
                             return const SizedBox();
                           });
                     } else {
@@ -66,7 +66,9 @@ class _FavoritesState extends State<Favorites> {
                   });
             }
 
-            if (snapshot.hasError) return Text('Error = ${snapshot.error}');
+            if (snapshot.hasError) {
+              return Text('Error = ${snapshot.error}');
+            }
 
             return const Center(
                 child: CircularProgressIndicator(
@@ -81,7 +83,7 @@ class _FavoritesState extends State<Favorites> {
   Container cardFav(
       QuerySnapshot<Object?> dataQuotes, int index, dataFav, int i) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(10),

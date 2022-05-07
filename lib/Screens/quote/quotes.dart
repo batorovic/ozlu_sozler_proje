@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ozlu_sozler/Screens/favorites/favorites.dart';
+import 'package:ozlu_sozler/Screens/user-quotes/UserQuotes.dart';
 import 'package:ozlu_sozler/constants.dart';
 import 'package:ozlu_sozler/service/auth.dart';
 
@@ -122,10 +123,10 @@ class _QuotesState extends State<Quotes> {
                 ],
               ),
             )
-          : const Favorites(),
-      // : _selectedIndex == 1
-      //     ? Favorites()
-      //     : Favorites(),
+          // : const Favorites(),
+          : _selectedIndex == 1
+              ? const Favorites()
+              : const UserQuotes(),
       bottomNavigationBar: btmNavBar(),
     );
   }
@@ -202,6 +203,9 @@ class _QuotesState extends State<Quotes> {
                 ? Icons.favorite
                 : Icons.favorite_border_outlined),
             label: 'Favoriler'),
+        BottomNavigationBarItem(
+            icon: Icon(_selectedIndex == 2 ? Icons.draw : Icons.draw_outlined),
+            label: 'Yaz'),
       ],
       currentIndex: _selectedIndex,
       selectedItemColor: kPrimaryColor,
