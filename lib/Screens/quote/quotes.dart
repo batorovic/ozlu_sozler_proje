@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ozlu_sozler/Screens/UserQuotes/UserQuotes.dart';
 import 'package:ozlu_sozler/Screens/favorites/favorites.dart';
-import 'package:ozlu_sozler/Screens/user-quotes/UserQuotes.dart';
 import 'package:ozlu_sozler/constants.dart';
 import 'package:ozlu_sozler/service/auth.dart';
 
@@ -147,9 +147,6 @@ class _QuotesState extends State<Quotes> {
                   children: [
                     TextButton(
                       onPressed: () async {
-                        // print(_authService.getUser()?.uid.toString());
-                        // print(data.docs[index].id);
-
                         _authService.addToFavorite(
                             data.docs[index].id, context);
                       },
@@ -165,26 +162,6 @@ class _QuotesState extends State<Quotes> {
                 ),
               ),
               const SizedBox(height: 4),
-
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: <Widget>[
-              //     // IconButton(
-              //     //   onPressed: () {
-              //     //     favoriIcon = !favoriIcon;
-              //     //   },
-              //     //   icon: const Icon(
-              //     //     Icons.favorite_border_outlined,
-              //     //     color: kPrimaryColor,
-              //     //   ),
-              //     // ),
-              //     Text(
-              //       '- ' + data.docs[index]['Yazar'],
-              //       style: const TextStyle(fontSize: 14.5),
-              //     ),
-              //     const SizedBox(width: 8),
-              //   ],
-              // ),
             ],
           ),
         ),

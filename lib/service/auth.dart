@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ozlu_sozler/Screens/UserQuotes/UpdateStatus.dart';
 import 'package:ozlu_sozler/constants.dart';
 
 class AuthService {
@@ -16,6 +17,72 @@ class AuthService {
 
   CollectionReference favorites =
       FirebaseFirestore.instance.collection('favoriler');
+  CollectionReference userSoz =
+      FirebaseFirestore.instance.collection('user-soz');
+
+  addUserQuote(String soz, context, Status status) {
+    // FirebaseFirestore.instance
+    //     .collection("user-soz")
+    //     .add({
+    //       'uid': _auth.currentUser?.uid,
+    //       'soz': soz,
+    //     })
+    //     .then((value) => {
+    //           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //               content: Text("Eklendi"),
+    //               duration: Duration(milliseconds: 1250),
+    //               backgroundColor: kPrimaryColor,
+    //               behavior: SnackBarBehavior.floating))
+    //         })
+    //     .catchError((error) => print(error));
+
+    bool durum = false;
+    String id = "";
+    FirebaseFirestore.instance
+        .collection("user-soz")
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        if (doc['soz'] == soz) {
+          id = doc.id;
+          durum = true;
+          return;
+        }
+      });
+    }).then((value) => {
+              if (durum)
+                {
+                  // userSoz.doc(id).update({'soz': soz}),
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Onceden yazdıginiz soz"),
+                      duration: Duration(milliseconds: 1250),
+                      backgroundColor: kPrimaryColor,
+                      behavior: SnackBarBehavior.floating))
+                }
+              else
+                {
+                  if (status.getSelectedId() == "")
+                    {
+                      userSoz.add({'uid': _auth.currentUser?.uid, 'soz': soz}),
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Eklendi"),
+                          duration: Duration(milliseconds: 1250),
+                          backgroundColor: kPrimaryColor,
+                          behavior: SnackBarBehavior.floating))
+                    }
+                  else
+                    {
+                      userSoz.doc(status.getSelectedId()).update({'soz': soz}),
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Guncellendi"),
+                          duration: Duration(milliseconds: 1250),
+                          backgroundColor: kPrimaryColor,
+                          behavior: SnackBarBehavior.floating)),
+                      status.setSelectedId(""),
+                    }
+                }
+            });
+  }
 
   addToFavorite(String sozId, context) {
     bool durum = false;
@@ -85,7 +152,8 @@ class AuthService {
 
   Future<String> signIn(String email, String password) async {
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      await _auth.signInWithEmailAndPassword(
+          email: "shopdugun@gmail.com", password: "123456");
       return 'Signed in';
     } on FirebaseAuthException catch (e) {
       return e.message.toString();
