@@ -20,6 +20,9 @@ class _QuotesState extends State<Quotes> {
   int _selectedIndex = 0;
   List<DropdownMenuItem<String>> menuItems = [];
 
+  var dropDownData;
+  var setDefaultData = true;
+
   String _selectedValue = 'Hepsi';
 
   void _onItemTapped(int index) {
@@ -61,29 +64,61 @@ class _QuotesState extends State<Quotes> {
                   const SizedBox(
                     height: 50,
                   ),
-                  FutureBuilder(
-                      future: (menuItems.isEmpty ? futureKategori() : null),
-                      builder: (BuildContext context, AsyncSnapshot snapshot2) {
-                        if (snapshot2.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(child: Text('loading...'));
-                        } else {
-                          if (snapshot2.hasError) {
-                            return Center(
-                                child: Text('Error: ${snapshot2.error}'));
-                          } else {
-                            return DropdownButton(
-                                hint: const Text('Favorites'),
-                                value: _selectedValue,
-                                items: menuItems,
-                                onChanged: (String? _value) {
-                                  setState(() {
-                                    _selectedValue = _value!;
-                                  });
-                                });
-                          }
-                        }
-                      }),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('kategori')
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot2) {
+                      if (!snapshot2.hasData) return Container();
+
+                      if (setDefaultData) {
+                        dropDownData = "Hepsi";
+                      }
+                      return DropdownButton(
+                        isExpanded: false,
+                        value: dropDownData,
+                        items: snapshot2.data?.docs.map((value) {
+                          return DropdownMenuItem(
+                            value: value.get('Kategori'),
+                            child: Text('${value.get('Kategori')}'),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(
+                            () {
+                              dropDownData = value;
+                              _selectedValue = value.toString();
+                              setDefaultData = false;
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  // FutureBuilder(
+                  //     future: (menuItems.isEmpty ? futureKategori() : null),
+                  //     builder: (BuildContext context, AsyncSnapshot snapshot2) {
+                  //       if (snapshot2.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return const Center(child: Text('loading...'));
+                  //       } else {
+                  //         if (snapshot2.hasError) {
+                  //           return Center(
+                  //               child: Text('Error: ${snapshot2.error}'));
+                  //         } else {
+                  //           return DropdownButton(
+                  //               hint: const Text('Favorites'),
+                  //               value: _selectedValue,
+                  //               items: menuItems,
+                  //               onChanged: (String? _value) {
+                  //                 setState(() {
+                  //                   _selectedValue = _value!;
+                  //                 });
+                  //               });
+                  //         }
+                  //       }
+                  //     }),
                   Expanded(
                     child: StreamBuilder<QuerySnapshot>(
                       stream: quotes,

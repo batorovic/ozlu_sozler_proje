@@ -24,8 +24,7 @@ class _UserQuotesState extends State<UserQuotes> {
       .snapshots();
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
+    ////
     return DefaultTabController(
       length: 2,
       child: Scaffold(
