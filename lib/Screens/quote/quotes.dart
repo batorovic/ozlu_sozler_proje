@@ -22,6 +22,7 @@ class _QuotesState extends State<Quotes> {
 
   var dropDownData;
   var setDefaultData = true;
+  int testSelect = 0;
 
   String _selectedValue = 'Hepsi';
 
@@ -51,118 +52,101 @@ class _QuotesState extends State<Quotes> {
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> quotes =
         FirebaseFirestore.instance.collection('söz').snapshots();
-    final Stream<QuerySnapshot> kategori =
-        FirebaseFirestore.instance.collection('kategori').snapshots();
+    // final Stream<QuerySnapshot> kategori =
+    //     FirebaseFirestore.instance.collection('kategori').snapshots();
+    final screens = [sozler(quotes), const Favorites(), const UserQuotes()];
 
-    Size size = MediaQuery.of(context).size;
+    // Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: _selectedIndex == 0
-          ? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('kategori')
-                        .snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot2) {
-                      if (!snapshot2.hasData) return Container();
+      body: screens[testSelect],
+      bottomNavigationBar: testNav(),
+    );
+    // return Scaffold(
+    //   body: _selectedIndex == 0
+    //       ? sozler(quotes)
+    //       // : const Favorites(),
+    //       : _selectedIndex == 1
+    //           ? const Favorites()
+    //           : const UserQuotes(),
+    //   bottomNavigationBar: btmNavBar(),
+    // );
+  }
 
-                      if (setDefaultData) {
-                        dropDownData = "Hepsi";
-                      }
-                      return DropdownButton(
-                        isExpanded: false,
-                        value: dropDownData,
-                        items: snapshot2.data?.docs.map((value) {
-                          return DropdownMenuItem(
-                            value: value.get('Kategori'),
-                            child: Text('${value.get('Kategori')}'),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(
-                            () {
-                              dropDownData = value;
-                              _selectedValue = value.toString();
-                              setDefaultData = false;
-                            },
-                          );
-                        },
-                      );
+  Padding sozler(Stream<QuerySnapshot<Object?>> quotes) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 50,
+          ),
+          StreamBuilder<QuerySnapshot>(
+            stream:
+                FirebaseFirestore.instance.collection('kategori').snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
+              if (!snapshot2.hasData) return Container();
+
+              if (setDefaultData) {
+                dropDownData = "Hepsi";
+              }
+              return DropdownButton(
+                isExpanded: false,
+                value: dropDownData,
+                items: snapshot2.data?.docs.map((value) {
+                  return DropdownMenuItem(
+                    value: value.get('Kategori'),
+                    child: Text('${value.get('Kategori')}'),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(
+                    () {
+                      dropDownData = value;
+                      _selectedValue = value.toString();
+                      setDefaultData = false;
                     },
-                  ),
-                  // FutureBuilder(
-                  //     future: (menuItems.isEmpty ? futureKategori() : null),
-                  //     builder: (BuildContext context, AsyncSnapshot snapshot2) {
-                  //       if (snapshot2.connectionState ==
-                  //           ConnectionState.waiting) {
-                  //         return const Center(child: Text('loading...'));
-                  //       } else {
-                  //         if (snapshot2.hasError) {
-                  //           return Center(
-                  //               child: Text('Error: ${snapshot2.error}'));
-                  //         } else {
-                  //           return DropdownButton(
-                  //               hint: const Text('Favorites'),
-                  //               value: _selectedValue,
-                  //               items: menuItems,
-                  //               onChanged: (String? _value) {
-                  //                 setState(() {
-                  //                   _selectedValue = _value!;
-                  //                 });
-                  //               });
-                  //         }
-                  //       }
-                  //     }),
-                  Expanded(
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: quotes,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasError) {
-                          return const Text('Error');
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              backgroundColor: kBackGroundColor,
-                              color: kPrimaryColor,
-                            ),
-                          );
-                        }
-
-                        final data = snapshot.requireData;
-
-                        return ListView.builder(
-                          itemCount: data.size,
-                          itemBuilder: (context, index) {
-                            if (_selectedValue ==
-                                data.docs[index]['Kategori']) {
-                              return cardData(data, index);
-                            } else if (_selectedValue == 'Hepsi') {
-                              return cardData(data, index);
-                            } else {
-                              return const SizedBox();
-                            }
-                          },
-                        );
-                      },
+                  );
+                },
+              );
+            },
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: quotes,
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Error');
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: kBackGroundColor,
+                      color: kPrimaryColor,
                     ),
-                  ),
-                ],
-              ),
-            )
-          // : const Favorites(),
-          : _selectedIndex == 1
-              ? const Favorites()
-              : const UserQuotes(),
-      bottomNavigationBar: btmNavBar(),
+                  );
+                }
+
+                final data = snapshot.requireData;
+
+                return ListView.builder(
+                  itemCount: data.size,
+                  itemBuilder: (context, index) {
+                    if (_selectedValue == data.docs[index]['Kategori']) {
+                      return cardData(data, index);
+                    } else if (_selectedValue == 'Hepsi') {
+                      return cardData(data, index);
+                    } else {
+                      return const SizedBox();
+                    }
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -224,6 +208,42 @@ class _QuotesState extends State<Quotes> {
       onTap: _onItemTapped,
       backgroundColor: kBackGroundColor,
       iconSize: 25,
+    );
+  }
+
+  NavigationBarTheme testNav() {
+    return NavigationBarTheme(
+      data: NavigationBarThemeData(
+        backgroundColor: kPrimaryColor,
+        iconTheme: MaterialStateProperty.all(
+            const IconThemeData(color: kPrimaryColor)),
+        indicatorColor: Colors.blue.shade100,
+        labelTextStyle: MaterialStateProperty.all(const TextStyle(
+            fontSize: 15, fontWeight: FontWeight.w500, color: kPrimaryColor)),
+      ),
+      child: NavigationBar(
+          animationDuration: const Duration(milliseconds: 800),
+          backgroundColor: const Color(0xFFf1f5fb),
+          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+          selectedIndex: testSelect,
+          onDestinationSelected: (index) => setState(() => testSelect = index),
+          height: 60,
+          destinations: const [
+            NavigationDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home),
+                label: "Home"),
+            NavigationDestination(
+                icon: Icon(Icons.favorite_outline),
+                selectedIcon: Icon(
+                  Icons.favorite,
+                ),
+                label: "Favoriler"),
+            NavigationDestination(
+                icon: Icon(Icons.draw_outlined),
+                selectedIcon: Icon(Icons.draw),
+                label: "Yaz"),
+          ]),
     );
   }
 }
