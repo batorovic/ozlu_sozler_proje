@@ -24,7 +24,6 @@ class _UserQuotesState extends State<UserQuotes> {
       .snapshots();
   @override
   Widget build(BuildContext context) {
-    ////
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -49,51 +48,62 @@ class _UserQuotesState extends State<UserQuotes> {
     );
   }
 
-  StreamBuilder<QuerySnapshot<Object?>> viewQuote() {
-    return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('user-soz')
-            .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final data = snapshot.requireData;
-            return ListView.builder(
-              itemCount: data.size,
-              itemBuilder: (context, index) {
-                return quoteCard(data, index, context);
-              },
-            );
-          }
-          if (snapshot.hasError) {
-            return Text("Error =${snapshot.error}");
-          }
-          return const Center(
-              child: CircularProgressIndicator(color: kPrimaryColor));
-        });
+  viewQuote() {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('user-soz')
+              .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final data = snapshot.requireData;
+              return ListView.builder(
+                itemCount: data.size,
+                itemBuilder: (context, index) {
+                  return quoteCard(data, index, context);
+                },
+              );
+            }
+            if (snapshot.hasError) {
+              return Text("Error =${snapshot.error}");
+            }
+            return const Center(
+                child: CircularProgressIndicator(color: kPrimaryColor));
+          }),
+    );
   }
 
   quoteCard(QuerySnapshot<Object?> dataQuotes, int i, context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
       child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                title: Text(dataQuotes.docs[i]['soz'],
-                    style: const TextStyle(fontSize: 18)),
-                subtitle: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          elevation: 3,
+          shadowColor: kPrimaryColor,
+          shape: const RoundedRectangleBorder(
+            side: BorderSide(
+              color: kPrimaryColor,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  dataQuotes.docs[i]['soz'],
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
                         onPressed: () {
                           DefaultTabController.of(context)?.animateTo(0);
                           userQuote.text = dataQuotes.docs[i]['soz'];
                           durum.setSelectedId(dataQuotes.docs[i].id);
-                          print(durum.getSelectedId());
 
                           setState(() {
                             updateStatus = !updateStatus;
@@ -122,12 +132,9 @@ class _UserQuotesState extends State<UserQuotes> {
                         ))
                   ],
                 ),
-              ),
-              const SizedBox(height: 4),
-            ],
-          ),
-        ),
-      ),
+              ],
+            ),
+          )),
     );
   }
 

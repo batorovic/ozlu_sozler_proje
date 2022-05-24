@@ -61,58 +61,54 @@ class _QuotesState extends State<Quotes> {
       body: screens[testSelect],
       bottomNavigationBar: testNav(),
     );
-    // return Scaffold(
-    //   body: _selectedIndex == 0
-    //       ? sozler(quotes)
-    //       // : const Favorites(),
-    //       : _selectedIndex == 1
-    //           ? const Favorites()
-    //           : const UserQuotes(),
-    //   bottomNavigationBar: btmNavBar(),
-    // );
   }
 
-  Padding sozler(Stream<QuerySnapshot<Object?>> quotes) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 50,
-          ),
-          StreamBuilder<QuerySnapshot>(
-            stream:
-                FirebaseFirestore.instance.collection('kategori').snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
-              if (!snapshot2.hasData) return Container();
+  sozler(Stream<QuerySnapshot<Object?>> quotes) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection('kategori').snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot2) {
+                if (!snapshot2.hasData) return Container();
 
-              if (setDefaultData) {
-                dropDownData = "Hepsi";
-              }
-              return DropdownButton(
-                isExpanded: false,
-                value: dropDownData,
-                items: snapshot2.data?.docs.map((value) {
-                  return DropdownMenuItem(
-                    value: value.get('Kategori'),
-                    child: Text('${value.get('Kategori')}'),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(
-                    () {
-                      dropDownData = value;
-                      _selectedValue = value.toString();
-                      setDefaultData = false;
-                    },
-                  );
-                },
-              );
-            },
-          ),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
+                if (setDefaultData) {
+                  dropDownData = "Hepsi";
+                }
+                return DropdownButton(
+                  dropdownColor: Colors.white,
+                  elevation: 3,
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  style: const TextStyle(
+                      color: kPrimaryColor,
+                      fontSize: 15.5,
+                      fontWeight: FontWeight.w500),
+                  isExpanded: false,
+                  value: dropDownData,
+                  items: snapshot2.data?.docs.map((value) {
+                    return DropdownMenuItem(
+                      value: value.get('Kategori'),
+                      child: Text('${value.get('Kategori')}'),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(
+                      () {
+                        dropDownData = value;
+                        _selectedValue = value.toString();
+                        setDefaultData = false;
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+            StreamBuilder<QuerySnapshot>(
               stream: quotes,
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -131,10 +127,12 @@ class _QuotesState extends State<Quotes> {
                 final data = snapshot.requireData;
 
                 return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: data.size,
                   itemBuilder: (context, index) {
                     if (_selectedValue == data.docs[index]['Kategori']) {
-                      return cardData(data, index);
+                      return (cardData(data, index));
                     } else if (_selectedValue == 'Hepsi') {
                       return cardData(data, index);
                     } else {
@@ -144,24 +142,34 @@ class _QuotesState extends State<Quotes> {
                 );
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Center cardData(QuerySnapshot<Object?> data, int index) {
-    return Center(
+  cardData(QuerySnapshot<Object?> data, int index) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
       child: Card(
+        elevation: 3,
+        shadowColor: kPrimaryColor,
+        shape: const RoundedRectangleBorder(
+          side: BorderSide(
+            color: kPrimaryColor,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                title: Text(data.docs[index]['Söz'],
-                    style: const TextStyle(fontSize: 18)),
-                subtitle: Row(
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  data.docs[index]['Söz'],
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
@@ -171,19 +179,46 @@ class _QuotesState extends State<Quotes> {
                       },
                       child: const Text("Favorilere Ekle",
                           style:
-                              TextStyle(color: kPrimaryColor, fontSize: 15.5)),
+                              TextStyle(color: kPrimaryColor, fontSize: 14.5)),
                     ),
                     Text(
                       '- ' + data.docs[index]['Yazar'],
-                      style: const TextStyle(fontSize: 15.5),
+                      style: const TextStyle(fontSize: 14.5),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 4),
-            ],
-          ),
-        ),
+              ],
+            )
+            // Column(
+            //   mainAxisSize: MainAxisSize.min,
+            //   children: <Widget>[
+            //     ListTile(
+            //       title: Text(data.docs[index]['Söz'],
+            //           style: const TextStyle(fontSize: 18)),
+            //       subtitle: Row(
+            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //         children: [
+            //           TextButton(
+            //             onPressed: () async {
+            //               _authService.addToFavorite(
+            //                   data.docs[index].id, context);
+            //             },
+            //             child: const Text("Favorilere Ekle",
+            //                 style:
+            //                     TextStyle(color: kPrimaryColor, fontSize: 15.5)),
+            //           ),
+            //           Text(
+            //             '- ' + data.docs[index]['Yazar'],
+            //             style: const TextStyle(fontSize: 15.5),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //     const SizedBox(height: 4),
+            //   ],
+            // ),
+
+            ),
       ),
     );
   }

@@ -34,95 +34,117 @@ class _FavoritesState extends State<Favorites> {
   Widget build(BuildContext context) {
     //
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: StreamBuilder<QuerySnapshot>(
-          stream: favoriStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final dataFav = snapshot.requireData;
-              return StreamBuilder<QuerySnapshot>(
-                  stream: quotes,
-                  builder: (context, sp2) {
-                    if (sp2.hasData) {
-                      final dataQuotes = sp2.requireData;
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 50),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("Favorileriniz",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline5
+                      ?.merge(const TextStyle(color: kPrimaryColor))),
+              StreamBuilder<QuerySnapshot>(
+                stream: favoriStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final dataFav = snapshot.requireData;
+                    return StreamBuilder<QuerySnapshot>(
+                        stream: quotes,
+                        builder: (context, sp2) {
+                          if (sp2.hasData) {
+                            final dataQuotes = sp2.requireData;
 
-                      return ListView.builder(
-                          itemCount: dataFav.size,
-                          itemBuilder: (context, index) {
-                            int i = 0;
-                            for (var valQuote in dataQuotes.docs) {
-                              if (valQuote.reference.id.toString() ==
-                                  dataFav.docs[index]['sozid'].toString()) {
-                                return cardFav(dataQuotes, index, dataFav, i);
-                              }
-                              i += 1;
-                            }
-                            return const SizedBox();
-                          });
-                    } else {
-                      return const SizedBox(); //circular vardi
-                    }
-                  });
-            }
+                            return ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: dataFav.size,
+                                itemBuilder: (context, index) {
+                                  int i = 0;
+                                  for (var valQuote in dataQuotes.docs) {
+                                    if (valQuote.reference.id.toString() ==
+                                        dataFav.docs[index]['sozid']
+                                            .toString()) {
+                                      return cardFav(
+                                          dataQuotes, index, dataFav, i);
+                                    }
+                                    i += 1;
+                                  }
+                                  return const SizedBox();
+                                });
+                          } else {
+                            return const SizedBox(); //circular vardi
+                          }
+                        });
+                  }
 
-            if (snapshot.hasError) {
-              return Text('Error = ${snapshot.error}');
-            }
+                  if (snapshot.hasError) {
+                    return Text('Error = ${snapshot.error}');
+                  }
 
-            return const Center(
-                child: CircularProgressIndicator(
-              color: kPrimaryColor,
-            ));
-          },
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    color: kPrimaryColor,
+                  ));
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Container cardFav(
-      QuerySnapshot<Object?> dataQuotes, int index, dataFav, int i) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
+  cardFav(QuerySnapshot<Object?> dataQuotes, int index, dataFav, int i) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
       child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                title: Text(dataQuotes.docs[i]['Söz'],
-                    style: const TextStyle(fontSize: 18)),
-                subtitle: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                        onPressed: () async {
-                          var collection = FirebaseFirestore.instance
-                              .collection('favoriler');
-                          await collection.doc(dataFav.docs[index].id).delete();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("Favorilerden cikarildi ! "),
-                                  duration: Duration(milliseconds: 1250),
-                                  backgroundColor: kPrimaryColor,
-                                  behavior: SnackBarBehavior.floating));
-                        },
-                        child: const Text("Favorilerden cikar",
-                            style: TextStyle(
-                                color: kPrimaryColor, fontSize: 15.5))),
-                    Text(
-                      '- ' + dataQuotes.docs[i]['Yazar'],
-                      style: const TextStyle(fontSize: 15.5),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 4),
-            ],
+          elevation: 3,
+          shadowColor: kPrimaryColor,
+          shape: const RoundedRectangleBorder(
+            side: BorderSide(
+              color: kPrimaryColor,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
           ),
-        ),
-      ),
+          child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    dataQuotes.docs[i]['Söz'],
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                          onPressed: () async {
+                            var collection = FirebaseFirestore.instance
+                                .collection('favoriler');
+                            await collection
+                                .doc(dataFav.docs[index].id)
+                                .delete();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("Favorilerden cikarildi ! "),
+                                    duration: Duration(milliseconds: 1250),
+                                    backgroundColor: kPrimaryColor,
+                                    behavior: SnackBarBehavior.floating));
+                          },
+                          child: const Text("Favorilerden Cikar",
+                              style: TextStyle(
+                                  color: kPrimaryColor, fontSize: 15.5))),
+                      Text(
+                        '- ' + dataQuotes.docs[i]['Yazar'],
+                        style: const TextStyle(fontSize: 15.5),
+                      ),
+                    ],
+                  ),
+                ],
+              ))),
     );
   }
 
